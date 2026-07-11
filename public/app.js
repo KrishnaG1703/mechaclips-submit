@@ -93,7 +93,7 @@ const againBtn = document.getElementById('again');
 let selectedGame = '';
 let clipFile = null;
 
-const MAX_SIZE = 200 * 1024 * 1024;
+const MAX_SIZE = 100 * 1024 * 1024;
 
 chipsEl.addEventListener('click', (e) => {
   const chip = e.target.closest('.chip');
@@ -125,7 +125,7 @@ function setFile(file) {
   if (!file) return;
   const isMp4 = file.type === 'video/mp4' || file.name.toLowerCase().endsWith('.mp4');
   if (!isMp4) { note.textContent = 'mp4 only — export your clip as .mp4'; return; }
-  if (file.size > MAX_SIZE) { note.textContent = 'that clip is over 200 MB — trim it down a little'; return; }
+  if (file.size > MAX_SIZE) { note.textContent = 'that clip is over 100 MB — trim it down a little'; return; }
   clipFile = file;
   fileName.textContent = file.name;
   fileSize.textContent = prettySize(file.size);
@@ -168,16 +168,17 @@ form.addEventListener('submit', (e) => {
   if (!selectedGame) { note.textContent = 'pick a game first'; return; }
   if (!clipFile) { note.textContent = 'attach your .mp4 clip'; return; }
 
-  const data = new FormData();
-  data.append('game', selectedGame);
-  data.append('handle', handleInput.value.trim());
-  data.append('clip', clipFile);
+  const params = new URLSearchParams({
+    game: selectedGame,
+    handle: handleInput.value.trim(),
+    name: clipFile.name,
+  });
 
   submitBtn.disabled = true;
   submitText.textContent = 'sending…';
 
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/api/submit');
+  xhr.open('PUT', `/api/upload?${params}`);
   xhr.upload.onprogress = (ev) => {
     if (ev.lengthComputable) progress.style.width = `${(ev.loaded / ev.total) * 100}%`;
   };
@@ -198,7 +199,7 @@ form.addEventListener('submit', (e) => {
     note.textContent = 'connection dropped — try again';
     resetSubmitBtn();
   };
-  xhr.send(data);
+  xhr.send(clipFile);
 });
 
 function resetSubmitBtn() {

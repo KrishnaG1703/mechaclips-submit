@@ -27,15 +27,27 @@
 <div class="grid" id="grid"></div>
 <p class="empty" id="empty" hidden>nothing yet — share the link and let the clips roll in</p>
 <script>
-fetch('/api/submissions').then(r => r.json()).then(rows => {
-  if (!rows.length) { document.getElementById('empty').hidden = false; return; }
+const key = new URLSearchParams(location.search).get('key') || '';
+const empty = document.getElementById('empty');
+fetch(`/api/submissions?key=${encodeURIComponent(key)}`).then(r => {
+  if (r.status === 401) {
+    empty.textContent = 'locked — open this page with your admin key: /admin?key=YOUR_KEY';
+    empty.hidden = false;
+    return [];
+  }
+  return r.json();
+}).then(rows => {
+  if (!Array.isArray(rows) || !rows.length) {
+    if (empty.hidden) empty.hidden = false;
+    return;
+  }
   const grid = document.getElementById('grid');
   for (const s of rows) {
     const el = document.createElement('div');
     el.className = 'item';
     const when = new Date(s.submittedAt).toLocaleString();
     el.innerHTML = `
-      <video src="${s.file}" controls preload="metadata"></video>
+      <video src="${s.file}?key=${encodeURIComponent(key)}" controls preload="metadata"></video>
       <div class="meta"><span class="game"></span><span class="who"></span></div>
       <div class="when">${when} · ${(s.sizeBytes / 1048576).toFixed(1)} MB</div>`;
     el.querySelector('.game').textContent = s.game;

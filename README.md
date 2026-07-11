@@ -1,21 +1,26 @@
 # MechaClips — clip submission site
 
 Submission page for the [MechaClips](https://www.youtube.com/@mechaclipsreal) YouTube channel.
-Viewers pick a game, drop an `.mp4` (up to 200 MB), and optionally leave a handle for the credit.
+Viewers pick a game, drop an `.mp4` (up to 100 MB), and optionally leave a handle for the credit.
+
+Runs on Cloudflare Workers (free tier); clips are stored in an R2 bucket.
 
 ## Run locally
 
 ```bash
 npm install
-npm start        # http://localhost:4321
+npm run dev      # http://localhost:8787 (local R2 simulation, no account needed)
 ```
 
 - Submissions page: `/`
-- Review submissions (for the channel owner): `/admin`
-- Uploaded clips land in `uploads/`, metadata in `submissions.json` (both git-ignored)
+- Review submissions (channel owner only): `/admin?key=ADMIN_KEY`
+- Local dev admin key lives in `.dev.vars` (git-ignored)
 
 ## Deploy
 
-This app needs a Node server with disk storage, so GitHub Pages won't work.
-The included `render.yaml` deploys it on [Render](https://render.com) — connect this
-repo in the Render dashboard and it picks up the config automatically.
+```bash
+npx wrangler login                                   # one-time Cloudflare auth
+npx wrangler r2 bucket create mechaclips-clips        # one-time bucket setup
+npx wrangler secret put ADMIN_KEY                     # set the production admin key
+npm run deploy
+```
