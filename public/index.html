@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MechaClips — Submit your clip</title>
+<meta name="description" content="Send your best gaming clip to MechaClips. If it's cold enough, it makes the video." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Chakra+Petch:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
+</head>
+<body>
+
+<canvas id="snow" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="stage">
+  <header class="mast">
+    <div class="wordmark">MECHA<span>CLIPS</span></div>
+    <p class="tagline">weekly best-of · 10 minutes · your clip could make it</p>
+  </header>
+
+  <form id="form" class="card" novalidate>
+    <section class="step">
+      <label class="step-label"><span class="step-num">01</span> which game?</label>
+      <div class="chips" id="chips" role="radiogroup" aria-label="Which game">
+        <button type="button" class="chip" data-game="MechaChameleon">MechaChameleon</button>
+        <button type="button" class="chip" data-game="Valorant">Valorant</button>
+        <button type="button" class="chip" data-game="CS2">CS2</button>
+        <button type="button" class="chip" data-game="Fortnite">Fortnite</button>
+        <button type="button" class="chip" data-game="Apex Legends">Apex</button>
+        <button type="button" class="chip" data-game="Warzone">Warzone</button>
+        <button type="button" class="chip chip-other" data-game="__other">other…</button>
+      </div>
+      <input type="text" id="other-game" class="text-input hidden" placeholder="type the game" maxlength="60" autocomplete="off" />
+    </section>
+
+    <section class="step">
+      <label class="step-label"><span class="step-num">02</span> drop the clip</label>
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload your mp4 clip">
+        <input type="file" id="file" accept="video/mp4,.mp4" hidden />
+        <div class="drop-idle" id="drop-idle">
+          <div class="drop-flake">❄</div>
+          <p>drag your <strong>.mp4</strong> here<span class="muted"> — or click to browse</span></p>
+          <p class="muted small">max 200 MB</p>
+        </div>
+        <div class="drop-file hidden" id="drop-file">
+          <span class="file-name" id="file-name"></span>
+          <span class="file-size muted" id="file-size"></span>
+          <button type="button" class="file-clear" id="file-clear" aria-label="Remove file">×</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <label class="step-label optional"><span class="step-num">03</span> your handle <em>· optional, for the credit</em></label>
+      <input type="text" id="handle" class="text-input" placeholder="@you" maxlength="60" autocomplete="off" />
+    </section>
+
+    <button type="submit" class="submit" id="submit">
+      <span class="submit-text">send it in</span>
+      <span class="submit-progress" id="progress"></span>
+    </button>
+    <p class="form-note" id="note" role="status"></p>
+  </form>
+
+  <div class="card success hidden" id="success" aria-live="polite">
+    <div class="success-flake">❄</div>
+    <h2>clip received</h2>
+    <p class="muted">if it's cold enough, it makes the cut.<br/>watch for it on <a class="channel-link" href="https://www.youtube.com/@mechaclipsreal" target="_blank" rel="noopener"><strong>MechaClips</strong></a>.</p>
+    <button type="button" class="again" id="again">send another</button>
+  </div>
+
+  <footer class="foot">
+    <a href="https://www.youtube.com/@mechaclipsreal" target="_blank" rel="noopener">youtube.com/@mechaclipsreal</a>
+    <span class="dot">·</span>
+    <span>by submitting you let MechaClips feature your clip</span>
+  </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

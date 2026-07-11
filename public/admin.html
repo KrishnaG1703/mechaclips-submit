@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MechaClips — Submissions</title>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Chakra+Petch:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root { --bg:#060a11; --ink:#dce7f2; --dim:#6b7d92; --ice:#9fd8ff; --line:rgba(159,216,255,.14); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Chakra Petch',sans-serif; font-weight:300; background:var(--bg); color:var(--ink); padding:40px 20px; }
+  h1 { font-family:'Michroma',sans-serif; font-size:16px; letter-spacing:.3em; text-transform:uppercase; text-align:center; margin-bottom:6px; }
+  .sub { text-align:center; color:var(--dim); font-size:12px; letter-spacing:.15em; margin-bottom:34px; }
+  .grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+  .item { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:rgba(13,20,32,.7); }
+  video { width:100%; display:block; background:#000; aspect-ratio:16/9; }
+  .meta { padding:12px 14px; display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:13px; }
+  .game { color:var(--ice); font-weight:500; }
+  .who { color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .when { color:var(--dim); font-size:11px; padding:0 14px 12px; }
+  .empty { text-align:center; color:var(--dim); margin-top:60px; letter-spacing:.1em; }
+</style>
+</head>
+<body>
+<h1>Submissions</h1>
+<p class="sub">MechaClips · newest first</p>
+<div class="grid" id="grid"></div>
+<p class="empty" id="empty" hidden>nothing yet — share the link and let the clips roll in</p>
+<script>
+fetch('/api/submissions').then(r => r.json()).then(rows => {
+  if (!rows.length) { document.getElementById('empty').hidden = false; return; }
+  const grid = document.getElementById('grid');
+  for (const s of rows) {
+    const el = document.createElement('div');
+    el.className = 'item';
+    const when = new Date(s.submittedAt).toLocaleString();
+    el.innerHTML = `
+      <video src="${s.file}" controls preload="metadata"></video>
+      <div class="meta"><span class="game"></span><span class="who"></span></div>
+      <div class="when">${when} · ${(s.sizeBytes / 1048576).toFixed(1)} MB</div>`;
+    el.querySelector('.game').textContent = s.game;
+    el.querySelector('.who').textContent = s.handle;
+    grid.appendChild(el);
+  }
+});
+</script>
+</body>
+</html>
